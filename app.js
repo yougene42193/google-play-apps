@@ -1,12 +1,12 @@
 'use strict';
 const express = require('express');
 const morgan = require('morgan');
-
+const playstore = require('./playstore.js');
 const app = express();
 
 app.use(morgan('common'));
 
-const playstore = require('./playstore.js');
+
 
 app.get('/apps', (req, res) => {
   const { search = '', sort, genres } = req.query;
@@ -35,10 +35,15 @@ app.get('/apps', (req, res) => {
         .includes(search.toLowerCase())
     );
 
-  if(sort) {
+  if(sort === 'App') {
     results.sort((a, b) => {
       return a[sort] > b[sort] ? 1 : a[sort] < b[sort] ? -1 : 0;
     });
+  }
+  if(sort === 'Rating') {
+    results.sort((a, b) => {
+      return a[sort] < b[sort] ? 1 : a [sort] > b[sort] ? -1 : 0;
+    })
   }
   if(genres) {
     results = results.filter(app => app.Genres.includes(genres));
